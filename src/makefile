@@ -1,7 +1,8 @@
 MARLIB=marlex.o \
 	my.o \
 	ml.o \
-	LocaleApp.o
+	LocaleApp.o\
+	LocaleUtils.o
 
 LEX=flex
 YACC=bison
@@ -21,6 +22,7 @@ endif
 all: $(NAME) 
 
 $(NAME): $(MARLIB)
+	$(RM) $(NAME)
 	$(LINKER) $(LDFLAG) $(NAME) $(MARLIB)
 	mimeset -f $@
 
@@ -46,4 +48,5 @@ reading.o : reading.cc reading.h
 writing.o : writing.cc marcontrol.h writing.h
 ml.o : ml.l marlex.h minfo.h my.tab.h marcontrol.h
 my.o : my.y marcontrol.h minfo.h marlex.h
-LocaleApp.o : LocaleApp.h
+LocaleApp.o : LocaleApp.h LocaleUtils.h
+LocaleUtils.o: LocaleUtils.h marcontrol.h

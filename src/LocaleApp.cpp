@@ -34,5 +34,5 @@ LocaleApp::~LocaleApp()
 const char*
 LocaleApp::GetText(const char* text)
 {
-	fLocaleUtils->GetText(text);
+	return fLocaleUtils->GetText(text);
 }
