@@ -1,0 +1,191 @@
+
+<html>
+<head>
+<title>MAR</title>
+</head>
+<body bgcolor=whitesmoke>
+<h2><center>MAR</center></h2>
+<hr>
+MAR is a command line utility for the <a href="http://www.be.com">BeOS</a> platform.
+MAR will read flattened message files, file attributes, or file resources and output
+readable, editable XML.  MAR also has the capability of reading the XML output to write
+a file's resources, attributes, and a flattened message file.  Curious about what all
+those files contain in ~/config/settings, want to be able to manipulate them?  This tool
+may be for you. Download <a href="http://www.tvl-p.com/data/mar.zip">the latest MAR</a> now!
+For support for mar and the MAR library, please contact
+<a href="mailto:mar@tvl-p.com">Todd Lair</a>.
+<p>
+It is important to remember that MAR has two modes of operation: Reading (specified with the
+-r options) and Writing (specified with the -w options).  MAR has no default mode, so a -r or -w
+must be specified.  Reading is for when you want to read binary data and output XML, where Writing
+is for when you want to read XML and write binary data.  MAR's command line syntax is as follows:
+<p>
+<h3>Usage</h3>
+To use MAR, it must be run from a command line prompt.  First you specify the command line options
+then input file(s).  That is:<p>
+<code>mar [options] [input file ...]</code><p>
+
+<h3>Options</h3>
+MAR's command line options are as follows:
+<ul>
+ 	<li><b>Help</b><br>
+		-h will display brief information regarding mar's usage.
+  	<li><b>Reading</b><br>
+		Reading mode is specified with the -r option, and takes
+		an argument describing what part of the binary file you wish to read.
+     	Output will be tagged XML like text.  If reading mode
+      is specified, and the -o option is absent, output will be
+      written to stdout.  The different read modes are as follows:
+		<ul>
+       	<li>-rm read input file as a flattened message and output XML.
+       	<li>-ra read input file's attributes and ouput XML.
+         <li>-rr read input file's resources and output XML.
+		</ul>
+		<p>	
+		MAR does understand all basic types of element data, however, not
+		all files contain basic types.  MAR's -s and -b options provide a
+		means to handle these unsupported types.  Both -s and -b take a
+		&lt;type&gt; argument.  This argument can be specified as either
+		in the 4 letter code or numeric representation of the element data
+		type.  MAR treats all &lt;type&gt; arguments numeric if the first
+		character of the argument is a digit.
+		<ul>
+			<li>-s &lt;type&gt; Will treat &lt;type&gt; as a string type.  
+			This option can be used with 'MIMS' and like element data types.
+			<li>-b &lt;type&gt; Will treat &lt;type&gt; is a catch all and will
+			simply treat the element data as binary data.  Not very easily editable.
+		</ul>
+		<p>
+		When in reading mode, you can specify a -W option to specify the width of
+		the raw element data streams.  Normally, the streams are outputed as 16 bytes
+		per line, but a -W32 would make it 32 bytes per line.
+	<li><b>Writing</b><br>
+		Writing mode is specified with the -w option, and takes an argument
+		describing how the output should be written.  The input is expected
+		to be the XML type text that MAR outputs.  When using MAR's write
+		mode, you must specify an -o option with the path for the file you
+		wish to output to.  Also when in write mode and if no input files
+		are specified on the command line, input is read from stdin.
+		When writing attributes or resources, mar will first wipe out
+		all attributes or resources, an then write the data elements parsed.
+		The different write modes are as follows:
+
+		<ul>
+        	<li>-wm Write output as flattened message from XML input.
+         <li>-wa Write output as attributes from XML input.
+         <li>-wr Write output as resources from XML input.
+		</ul>
+
+	<li><b>General</b><br>
+		The -o &lt;filename&gt; option allows you to specify which file the
+		output will be written to.
+</ul>
+
+<h3>Programmers</h3>
+If your a programmer and your asking yourself how can I read the XML output MAR produces
+within my own programs, your in luck.  MAR was written with this in mind.  In fact,
+the MAR command line utility uses the MAR library which you can also use to read the XML
+text.  To use the MAR lib within your own programs, first compile the source in provided
+in the <a href="http://www.tvl-p.com/data/mar.zip">mar archive</a>. This will produce
+both mar and the libmar.a.  This libarary is what you want to link with when using the
+mar's XML parsing routines.
+<p>
+Your interface to
+the MAR library is contained within the marcontrol.h file, and should be the only header you
+need to include in your program's source files.  Once the header file is included, all you
+need to do is create an instance
+of MarControl and call that object's Parse method.  If Parse returns MAR_OK, you can then call the
+object's Message() function which will return a pointer to BMessage containing the data elements
+the XML input parsed. 
+<p>
+Here is an example of using the MarControl class.
+
+<pre><code>
+#include "marcontrol.h"
+
+...
+
+   const char *file_list =
+   {
+      "/boot/home/config/settings/myprog/settings.xml",
+      "/boot/home/config/settings/myprog/moresettings.xml"
+   };
+
+   MarControl marc (2, file_list);
+
+   if (marc.Parse() != MAR_OK)
+   {
+      /* Parse didn't go well, uh oh */
+      ...
+   }
+
+   BMessage settings, moresettings;
+   BMessage *msg (marc.Message());
+
+   if (msg-&gt;FindMessage (file_list[0], &amp;settings) == B_NO_ERROR)
+   {
+      /* do something with settings */
+      ...
+   }
+
+   if (msg-&gt;FindMessage (file_list[1], &amp;moresettings) == B_NO_ERROR)
+   {
+      /* do something with moresettings */
+      ...
+   }
+
+...
+
+</code></pre>
+
+
+
+The marcontrol.h header file declares the class MarControl and is
+documented thusly:
+
+<h4>
+MarControl::MarControl (void)<br>
+MarControl::MarControl (int32 num_files, const char **file_list)
+</h4>
+Constructs a MarControl instance.  If no parameters are passed to the constructor, the input is assumed
+to be from stdin.  Otherwise, the <code>num_files</code> parameter specifies how many files you would
+like to parse, and <code>file_list</code> is an array of character strings listing the file paths.  If passed
+a file listing, the constructor makes its own a copy of the file names.
+<p>
+<b>Note:</b>If passed a file_list, the Message method when called will return a container message.
+This message will contain a message for each each file parsed with the file name as the message's name.
+<p>
+<h4>virtual MarControl::~MarControl (void)</h4>
+Deconstructor for the MarControl instance.
+<p>
+
+<h4>virtual int MarControl::ParseError (const char *text)</h4>
+ParseError is called when the parser cannot proceed further either
+due to syntax errors in the XML or parse internal errors.  ParseError will
+print the line number the error occurred on, and a brief message as to why
+things went wrong to stderr.<p>
+If you choose to overide this method in a derivitive class, you may use the
+two protected data elements error and errorstr.  error will be set to an
+enumerated MarError defined in marcontrol.h.  It is possible that ParseError
+is called, and error is still M_OK, and in this case a "General" error should
+be assumed.  If error is not M_OK, errorstr should have a value describing the
+error.
+<p>
+
+
+<h4>MarError MarControl::Parse (void)</h4>
+This is what you call to get the ball rolling.  This parses either stdin or the file list
+passed to the MarControl's constructor.  It will return a MarError indicating the success
+of the parse.
+<p>
+
+<h4>BMessage	*MarControl::Message (void) const</h4>
+Returns the results of the Parse method call.  The BMessage returned will be the XML's
+representation in BMessage format.
+
+<h4>int MarControl::LineNumber (void)</h4>
+Returns the line number of where the parser is at.  Probably best called in derived
+MarControl's ParseError methods.
+
+</body>
+</html>

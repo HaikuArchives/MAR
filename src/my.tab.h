@@ -1,0 +1,72 @@
+typedef union {
+	char							*string;
+	long long					integer;
+	double						decimal;
+	struct MINFO				minfo;
+	struct SINFO				sinfo;
+	struct RINFO				rinfo;
+	struct RECTVALUE			rect;
+	struct COLORVALUE 		color;
+} YYSTYPE;
+#define	BOOL_TAG	257
+#define	DOUBLE_TAG	258
+#define	FLOAT_TAG	259
+#define	INT64_TAG	260
+#define	INT32_TAG	261
+#define	INT16_TAG	262
+#define	INT8_TAG	263
+#define	MESSAGE_TAG	264
+#define	MESSENGER_TAG	265
+#define	MIME_TAG	266
+#define	OFF_TAG	267
+#define	POINTER_TAG	268
+#define	POINT_TAG	269
+#define	RAW_TAG	270
+#define	RECT_TAG	271
+#define	REF_TAG	272
+#define	COLOR_TAG	273
+#define	SIZE_TAG	274
+#define	SSIZE_TAG	275
+#define	STRING_TAG	276
+#define	TIME_TAG	277
+#define	UINT64_TAG	278
+#define	UINT32_TAG	279
+#define	UINT16_TAG	280
+#define	UINT8_TAG	281
+#define	BOOL_END	282
+#define	DOUBLE_END	283
+#define	FLOAT_END	284
+#define	INT64_END	285
+#define	INT32_END	286
+#define	INT16_END	287
+#define	INT8_END	288
+#define	MESSAGE_END	289
+#define	MESSENGER_END	290
+#define	MIME_END	291
+#define	OFF_END	292
+#define	POINTER_END	293
+#define	POINT_END	294
+#define	RAW_END	295
+#define	RECT_END	296
+#define	REF_END	297
+#define	COLOR_END	298
+#define	SIZE_END	299
+#define	SSIZE_END	300
+#define	STRING_END	301
+#define	TIME_END	302
+#define	UINT64_END	303
+#define	UINT32_END	304
+#define	UINT16_END	305
+#define	UINT8_END	306
+#define	NAME_ATTR	307
+#define	WHAT_ATTR	308
+#define	SRC_ATTR	309
+#define	TYPE_ATTR	310
+#define	TRUE_DATA	311
+#define	FALSE_DATA	312
+#define	VALUE_ATTR	313
+#define	DECIMAL	314
+#define	INTEGER	315
+#define	WORD	316
+#define	LINE	317
+
