@@ -190,5 +190,7 @@ YYSTYPE *yylval ((YYSTYPE *)arg);
 \<!--													{ BEGIN COMMENT; }
 .														{ return yytext[0]; }
 \<\?xml												{ BEGIN COMMENT; }
+\<locale											{ BEGIN COMMENT; }
+\<\/locale\>										{ BEGIN COMMENT; }
 %%
 

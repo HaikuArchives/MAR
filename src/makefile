@@ -5,22 +5,23 @@ MARLIB=marlex.o \
 
 LEX=flex
 YACC=bison
-
+NAME = liblocale.a
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE), BePC)
 	LDFLAG = -cru
 	LINKER = ar
 	CXX = gcc
 else
-	LDFLAG = mwldppc
-	LINKER = -dead on -xml
+	LINKER = mwldppc
+	LDFLAG = -dead on -xml -o
+	NAME = liblocale_ppc.a
 	CXX = mwcc
 endif
 
-all: liblocale.a
+all: $(NAME) 
 
-liblocale.a: $(MARLIB)
-	$(LINKER) $(LDFLAG) liblocale.a $(MARLIB)
+$(NAME): $(MARLIB)
+	$(LINKER) $(LDFLAG) $(NAME) $(MARLIB)
 	mimeset -f $@
 
 clean:
@@ -37,7 +38,7 @@ clean:
 	$(CXX) -o $@ -c $(CXXFLAGS) ${<:y=tab.cc}
 	$(RM) ${<:y=tab.cc}
 .cpp.o:
-	$(CC) -c $< $(INCLUDES) $(CFLAGS) -o $@
+	$(CXX) -c $< $(INCLUDES) $(CFLAGS) -o $@
 
 main.o : main.cc marcontrol.h reading.h writing.h
 marlex.o : marlex.cc marlex.h
